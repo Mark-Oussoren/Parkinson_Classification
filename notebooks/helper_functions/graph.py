@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+import numpy as np
 import seaborn as sns
 
 # Set plotting font sizes and properties
@@ -31,14 +32,14 @@ color_list = sns.color_palette("Paired")
 
 
 def barplot(
-    series,  # type: pd.Series
-    savefig=False,  # type: bool
-    title="",  # type: str
-    xlab="",  # type: str
-    fig_path="figs/",  # type: str
-):  # type (...) -> plt.figure
+    series,  
+    savefig=False, 
+    title="",
+    xlab="",
+    fig_path="figs/", 
+): 
     """
-        Seaborn barplot of Pandas series
+    Seaborn barplot of Pandas series
 
     :param: series - pandas series
     :param: savefig - boolean - save fig or not
@@ -49,6 +50,39 @@ def barplot(
 
     fig_fcn({"num": None, "dpi": 80, "facecolor": "w"})
     fig = sns.barplot(series.values, series.index, palette="colorblind")
+    plt.title(title)
+    plt.xlabel(xlab)
+    if savefig:
+        plt.savefig(fig_path + f"{title}.png", dpi=350)
+
+    return fig
+
+def sns_corrplot(
+    corr, 
+    savefig=False,
+    title="",
+    xlab="",
+    fig_path="figs/"
+):
+    """
+    Seaborn corrplot of pandas dataframe
+
+    :param: corr - pandas dataframe consisting of correlations
+    :param: savefig - boolean - save fig or not
+    :param: title, xlab - strings for plot
+    :param: fig_path - string for figure folder/path
+    :return: matplotlib figure
+    """
+
+    fig_fcn({"num": None, "dpi": 80, "facecolor": "w"})
+    # Generate a mask for the upper triangle
+    mask = np.triu(np.ones_like(corr, dtype=bool))
+
+    # Generate a custom diverging colormap
+    cmap = sns.diverging_palette(230, 20, as_cmap=True)
+
+    # Draw the heatmap with the mask and correct aspect ratio
+    fig = sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3, center=0, square=True, linewidths=.5, cbar_kws={"shrink": .5})
     plt.title(title)
     plt.xlabel(xlab)
     if savefig:
